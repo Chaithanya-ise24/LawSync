@@ -1,41 +1,29 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LawSync - AI-Powered Legal Document Analysis
 
-## Getting Started
+LawSync is an intelligent legal document analysis platform that uses Google Gemini AI to analyze contracts, extract risks, and provide instant legal insights.
 
-First, run the development server:
+## Features
+
+- 🔐 **Email/Password Authentication** - Secure local authentication
+- 📄 **Multi-format Support** - Upload PDF (scanned & digital), DOCX, and TXT files
+- 🤖 **Gemini AI Vision OCR** - Extract text from scanned PDFs and images
+- 📊 **Risk Scorecard** - Visual risk assessment (0-100 score)
+- 🚩 **Red Flags Detection** - AI-identified critical clauses
+- 💬 **AI Chat Assistant** - Ask questions about your documents
+- 📝 **Document Simplification** - Convert legalese to plain English
+- 🌓 **Dark/Light Theme** - User preference support
+- 👤 **Profile Management** - Edit name, phone, and preferences
+- 📥 **Export Reports** - Download analysis as TXT
+
+## Tech Stack
+
+- **Frontend**: Next.js 16, TypeScript, Tailwind CSS
+- **AI**: Google Gemini 2.5 Flash with Vision capabilities
+- **Authentication**: Local JWT-based auth
+- **File Processing**: PDF-parse, Mammoth.js, Gemini Vision OCR
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# LawSync
-AI Powered Leagal Assistance
->>>>>>> d0750f8104e6b4ec22b2392930024c378354f44b
