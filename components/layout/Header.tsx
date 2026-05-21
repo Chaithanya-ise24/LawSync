@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { History, Bell, Globe, Menu, X, User, Moon, Sun, Monitor, LogOut, Check } from 'lucide-react';
@@ -16,13 +16,20 @@ export const Header = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [jurisdiction, setJurisdiction] = useState('India');
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  useState(() => {
-    const savedUser = localStorage.getItem('lawsync_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  });
+  // Load user data after component mounts (client-side only)
+  useEffect(() => {
+    // Use a timeout to avoid the setState warning
+    const timer = setTimeout(() => {
+      setMounted(true);
+      const savedUser = localStorage.getItem('lawsync_user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleJurisdictionChange = (newJurisdiction: string) => {
     setJurisdiction(newJurisdiction);
@@ -32,6 +39,7 @@ export const Header = () => {
   const handleLogout = async () => {
     localStorage.removeItem('lawsync_user');
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('lawsync_profile');
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
   };
@@ -41,8 +49,16 @@ export const Header = () => {
     return user.email.charAt(0).toUpperCase();
   };
 
+  const getUserDisplayName = () => {
+    if (!user?.email) return 'User';
+    return user.email.split('@')[0];
+  };
+
+  // Don't render anything until mounted on client
+  if (!mounted) return null;
+
   return (
-    <header className="glass border-b border-white/20 sticky top-0 z-50">
+    <header className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           
@@ -55,12 +71,12 @@ export const Header = () => {
           </Link>
 
           {/* Mobile Menu Button */}
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-slate-800 transition">
             {mobileMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6 text-white/80">
+          <nav className="hidden lg:flex items-center gap-6 text-gray-300">
             <Link href="/dashboard" className="hover:text-white transition">Dashboard</Link>
             <Link href="/dashboard?tool=documents" className="hover:text-white transition">Documents</Link>
             <Link href="/dashboard?tool=chat" className="hover:text-white transition">AI Chat</Link>
@@ -71,8 +87,8 @@ export const Header = () => {
             
             {/* History Dropdown */}
             <div className="relative">
-              <button onClick={() => setShowHistory(!showHistory)} className="p-2 rounded-lg hover:bg-white/10 transition">
-                <History className="w-5 h-5 text-white" />
+              <button onClick={() => setShowHistory(!showHistory)} className="p-2 rounded-lg hover:bg-slate-800 transition">
+                <History className="w-5 h-5 text-gray-300" />
               </button>
               {showHistory && (
                 <div className="absolute right-0 mt-2 w-64 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-40">
@@ -87,8 +103,8 @@ export const Header = () => {
 
             {/* Notifications */}
             <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 rounded-lg hover:bg-white/10 transition relative">
-                <Bell className="w-5 h-5 text-white" />
+              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 rounded-lg hover:bg-slate-800 transition relative">
+                <Bell className="w-5 h-5 text-gray-300" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
               {showNotifications && (
@@ -97,15 +113,16 @@ export const Header = () => {
                     <p className="text-xs text-gray-400 font-medium">NOTIFICATIONS</p>
                   </div>
                   <div className="px-4 py-2 text-sm text-gray-300">✅ Document analyzed successfully</div>
+                  <div className="px-4 py-2 text-sm text-gray-300">🤖 AI response ready</div>
                 </div>
               )}
             </div>
 
             {/* Jurisdiction Toggle */}
             <div className="relative">
-              <button onClick={() => setShowJurisdictionMenu(!showJurisdictionMenu)} className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/20 transition">
-                <Globe className="w-4 h-4 text-white" />
-                <span className="text-white text-sm">{jurisdiction}</span>
+              <button onClick={() => setShowJurisdictionMenu(!showJurisdictionMenu)} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700 hover:bg-slate-700 transition">
+                <Globe className="w-4 h-4 text-gray-300" />
+                <span className="text-sm text-gray-300">{jurisdiction}</span>
               </button>
               {showJurisdictionMenu && (
                 <div className="absolute right-0 mt-2 w-40 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-40">
@@ -125,7 +142,7 @@ export const Header = () => {
                 <div className="absolute right-0 mt-2 w-64 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-40">
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-slate-700">
-                    <p className="text-white font-semibold text-sm">{user?.email?.split('@')[0] || 'User'}</p>
+                    <p className="text-white font-semibold text-sm">{getUserDisplayName()}</p>
                     <p className="text-gray-400 text-xs truncate">{user?.email || 'No email'}</p>
                   </div>
 
@@ -160,11 +177,11 @@ export const Header = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pt-4 border-t border-white/10">
+          <div className="lg:hidden mt-4 pt-4 border-t border-slate-700">
             <nav className="flex flex-col gap-3">
-              <Link href="/dashboard" className="text-white/80 hover:text-white transition py-2">Dashboard</Link>
-              <Link href="/dashboard?tool=documents" className="text-white/80 hover:text-white transition py-2">Documents</Link>
-              <Link href="/dashboard?tool=chat" className="text-white/80 hover:text-white transition py-2">AI Chat</Link>
+              <Link href="/dashboard" className="text-gray-300 hover:text-white transition py-2">Dashboard</Link>
+              <Link href="/dashboard?tool=documents" className="text-gray-300 hover:text-white transition py-2">Documents</Link>
+              <Link href="/dashboard?tool=chat" className="text-gray-300 hover:text-white transition py-2">AI Chat</Link>
               <button onClick={handleLogout} className="text-red-400 text-left py-2">Log out</button>
             </nav>
           </div>

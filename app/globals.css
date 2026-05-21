@@ -1,6 +1,25 @@
 @import "tailwindcss";
 
+/* Light mode background */
+:root {
+  --background: #f8fafc;
+}
+
+/* Dark mode background */
+.dark {
+  --background: #0f172a;
+}
+
 body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+}
+
+/* Dashboard background based on theme */
+.light body {
+  background: #f8fafc;
+}
+
+.dark body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
 }
